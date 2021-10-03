@@ -1,0 +1,22 @@
+---
+ - hosts: ec2
+   become: true
+   tasks:
+     - name: add ec2 epel-release
+       command: sudo amazon-linux-extras install epel -y
+     - name: wget jenkins repo
+       command: wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
+     - name: import key for jenkins
+       command: rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+     - name: yum update
+       command: yum update -y
+     - name: Install Required Packages - Jenkins, Jave, Python
+       yum: 
+         name: 
+           - java-1.8.0-openjdk-devel.x86_64
+           - python3
+           - jenkins
+         state: present
+     - name: systemctl daemon restart to restart for all new tools
+       systemd:
+         daemon_reload: yes
